@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- PAGE 1: CINEMATIC WELCOME SCREEN -->
+<section id="home" class="welcome-section">
+  <div class="container welcome-inner">
+    <p class="mono-meta">FIRST ANNIVERSARY EDITION · <span data-bind-date>{{ data.anniversary_display_date }}</span> · {{ badge.badge_text }}</p>
+    <h1 class="display-title">{{ data.hero_title }}</h1>
+    <p class="hero-subtitle">&ldquo;<span data-bind-subtitle>{{ data.hero_subtitle }}</span>&rdquo;</p>
+
+    <div class="couple-banner">
+      <h2 class="couple-names">
+        <span data-bind-your-name>{{ data.your_name }}</span>
+        <span>+</span>
+        <span data-bind-partner-name>{{ data.partner_name }}</span>
+      </h2>
+      <p class="mono-meta"><span data-bind-date>{{ data.anniversary_display_date }}</span> · {{ badge.days_since_milestone }} Days Together</p>
+    </div>
+
+    <div class="welcome-actions">
+      <button type="button" id="open-surprise-btn" class="btn-primary btn-large">
+        OPEN YOUR SURPRISE 💌
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Personalize Strip -->
+<div class="personalize-toolbar">
+  <div class="container personalize-toolbar-inner">
+    <p class="mono-meta">
+      ✦ CELEBRATING <span data-bind-your-name>{{ data.your_name }}</span> + <span data-bind-partner-name>{{ data.partner_name }}</span> · <span data-bind-date>{{ data.anniversary_display_date }}</span>
+    </p>
+    <button type="button" class="btn-primary open-customizer-trigger">
+      ✎ Customize Names &amp; Date
+    </button>
+  </div>
+</div>
+
+<!-- PAGE 2: OUR LOVE STORY -->
+<section id="story" class="section-ivory">
+  <div class="container">
+    <div class="section-header">
+      <p class="mono-meta-dark">CHAPTERS OF US · OUR LOVE STORY</p>
+      <h2 class="section-title-dark">{{ data.story_heading }}</h2>
+    </div>
+    <div class="chapters-list">
+      {% for chapter in data.story_chapters %}
+      <article class="chapter-card {% if not chapter.photo %}no-photo{% endif %} reveal-on-scroll">
+        <div class="chapter-content">
+          <p class="mono-meta-dark">Chapter {{ chapter.number }} · {{ chapter.date }}</p>
+          <h3 class="chapter-title">{{ chapter.number }}. {{ chapter.title }}</h3>
+          <p class="chapter-text">{{ chapter.paragraph }}</p>
+        </div>
+        {% if chapter.photo %}
+        <div class="chapter-media">
+          <div class="art-frame" data-theme="{{ chapter.theme }}">
+            <img src="{{ url_for('static', filename=chapter.photo) }}" alt="{{ chapter.title }}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+            <div class="art-fallback" style="display: none;">
+              <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                <circle cx="32" cy="32" r="28" stroke="#D4AF37" stroke-opacity="0.45" stroke-width="1.5"/>
+                <path d="M32 44C32 44 18 34.5 18 24.5C18 19.5 22 16 26.5 16C29.5 16 32 18 32 20.5C32 18 34.5 16 37.5 16C42 16 46 19.5 46 24.5C46 34.5 32 44 32 44Z" fill="#D98A9C" fill-opacity="0.85"/>
+              </svg>
+              <span class="mono-meta">{{ chapter.date }}</span>
+              <strong style="font-family: var(--font-serif); font-size: 1.25rem;">{{ chapter.title }}</strong>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 3: FLOATING MEMORY GALLERY -->
+<section id="memories" class="section-dark">
+  <div class="container">
+    <div class="section-header">
+      <p class="mono-meta">FLOATING MEMORY GALLERY · {{ data.gallery_photos|length }} FRAMES</p>
+      <h2 class="section-title">{{ data.gallery_heading }}</h2>
+    </div>
+    <div class="gallery-grid" id="gallery-grid">
+      {% for photo in data.gallery_photos %}
+      <button type="button" class="gallery-card float-frame"
+        data-index="{{ loop.index0 }}"
+        data-src="{{ url_for('static', filename=photo.filename) }}"
+        data-caption="{{ photo.caption }}"
+        data-date="{{ photo.date }}"
+        data-description="{{ photo.description }}">
+        <div class="gallery-thumb">
+          <img src="{{ url_for('static', filename=photo.filename) }}" alt="{{ photo.caption }}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="art-fallback" style="display: none;">
+            <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <circle cx="26" cy="32" r="14" stroke="#E8D3A8" stroke-width="2.5"/>
+              <circle cx="38" cy="32" r="14" stroke="#D4AF37" stroke-width="2.5"/>
+            </svg>
+            <span class="mono-meta">{{ photo.date }}</span>
+            <strong style="font-family: var(--font-serif); font-size: 1.15rem;">{{ photo.caption }}</strong>
+          </div>
+        </div>
+        <p class="mono-meta">{{ photo.date }}</p>
+        <h3 class="gallery-caption">{{ photo.caption }}</h3>
+        <p class="gallery-desc">{{ photo.description }}</p>
+      </button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Lightbox Dialog (Hidden until a user clicks a photo card) -->
+  <div id="gallery-lightbox" class="lightbox-backdrop" role="dialog" aria-modal="true" aria-label="Memory Lightbox" hidden>
+    <div class="lightbox-panel">
+      <div class="lightbox-header">
+        <span id="lightbox-date" class="mono-meta"></span>
+        <button type="button" id="lightbox-close" class="btn-secondary">Close (ESC)</button>
+      </div>
+      <div class="lightbox-media" id="lightbox-media-box">
+        <img id="lightbox-img" src="" alt="" onerror="this.style.display='none'; document.getElementById('lightbox-fallback').style.display='flex';" />
+        <div id="lightbox-fallback" class="art-fallback" style="display: none;">
+          <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <circle cx="26" cy="32" r="14" stroke="#E8D3A8" stroke-width="2.5"/>
+            <circle cx="38" cy="32" r="14" stroke="#D4AF37" stroke-width="2.5"/>
+          </svg>
+          <span id="lightbox-fallback-title" style="font-family: var(--font-serif); font-size: 1.4rem;"></span>
+        </div>
+      </div>
+      <h3 id="lightbox-caption" class="chapter-title" style="color: #FAF6F0;"></h3>
+      <p id="lightbox-desc" class="gallery-desc"></p>
+      <div class="lightbox-controls">
+        <button type="button" id="lightbox-prev" class="btn-secondary">← Previous</button>
+        <button type="button" id="lightbox-next" class="btn-primary">Next →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 4: ANIMATED FLOWERS AND LOVE NOTES -->
+<section id="notes" class="section-velvet">
+  <div class="container">
+    <div class="section-header">
+      <p class="mono-meta">LOVE NOTES &amp; BLOOMING BOUQUET</p>
+      <h2 class="section-title">{{ data.love_notes_heading }}</h2>
+    </div>
+    <div class="notes-grid">
+      {% for note in data.love_notes %}
+      <div class="note-card" data-note-card>
+        <p class="mono-meta">NOTE 0{{ loop.index }} · {{ note.category }}</p>
+        <h3 class="note-short">&ldquo;{{ note.short }}&rdquo;</h3>
+        <div class="note-full" hidden>
+          <p>{{ note.full }}</p>
+        </div>
+        <button type="button" class="btn-secondary note-toggle-btn">Read Personal Note</button>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="bouquet-box">
+      <h3 class="section-title">A Virtual Rose Bouquet for <span data-bind-partner-name>{{ data.partner_name }}</span></h3>
+      <div class="welcome-actions">
+        <button type="button" id="send-bouquet-btn" class="btn-primary">Send Me a Bouquet 🌹</button>
+        <button type="button" id="replay-bouquet-btn" class="btn-secondary" hidden>Replay Bouquet Animation</button>
+      </div>
+      <div id="bouquet-reveal-stage" class="bouquet-stage" style="margin-top: 2rem;" hidden>
+        <div class="svg-bouquet" style="font-size: 2.5rem; margin-bottom: 1rem;" aria-label="Animated blooming roses">🌹 🌷 🌹</div>
+        <p class="hero-subtitle">&ldquo;{{ data.bouquet_message }}&rdquo;</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 5: OUR ANNIVERSARY LETTER -->
+<section id="letter" class="section-ivory">
+  <div class="container">
+    <div class="section-header">
+      <p class="mono-meta-dark">DIGITAL LOVE LETTER · <span data-bind-date>{{ data.anniversary_display_date }}</span></p>
+      <h2 class="section-title-dark">{{ data.letter.heading }}</h2>
+    </div>
+
+    <div id="envelope-closed" class="envelope-box">
+      <p class="mono-meta">FOR <span data-bind-partner-name>{{ data.partner_name }}</span> · FROM <span data-bind-your-name>{{ data.your_name }}</span></p>
+      <h3 style="font-family: var(--font-serif); font-size: 1.85rem; margin: 1rem 0 1.5rem;">Sealed for Our First Anniversary</h3>
+      <button type="button" id="open-letter-btn" class="btn-primary">OPEN MY LETTER 💌</button>
+    </div>
+
+    <article id="letter-paper" class="letter-paper" hidden
+      data-your-name="{{ data.your_name }}"
+      data-partner-name="{{ data.partner_name }}"
+      data-date="{{ data.anniversary_display_date }}">
+      <p class="letter-greeting">{{ data.letter.greeting }}</p>
+      <div id="letter-paragraphs">
+        {% for para in data.letter.paragraphs %}
+        <p>{{ para }}</p>
+        {% endfor %}
+      </div>
+      <p class="letter-signoff">{{ data.letter.sign_off }}<br /><strong><span data-bind-your-name>{{ data.your_name }}</span> ❤️</strong></p>
+      <div class="letter-actions">
+        <button type="button" id="read-again-btn" class="btn-secondary">Read Again</button>
+        <button type="button" id="download-letter-btn" class="btn-primary">Download Letter (.txt)</button>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- PAGE 6: OUR FIRST YEAR TIMELINE -->
+<section id="timeline" class="section-dark">
+  <div class="container">
+    <div class="section-header">
+      <p class="mono-meta">OUR FIRST YEAR TIMELINE</p>
+      <h2 class="section-title">{{ data.timeline_heading }}</h2>
+    </div>
+    <div class="timeline-list">
+      {% for item in data.timeline_milestones %}
+      <div class="timeline-item reveal-on-scroll">
+        <div class="timeline-marker">✦</div>
+        <div class="timeline-card">
+          <p class="mono-meta">{{ item.date }} · {{ item.category }}</p>
+          <h3 style="font-family: var(--font-serif); font-size: 1.65rem; margin: 0.4rem 0;">{{ item.title }}</h3>
+          <p style="color: var(--text-muted-dark);">{{ item.description }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 7: CINEMATIC ANNIVERSARY VIDEO & MEMORY REEL -->
+<section id="video-section" class="section-velvet">
+  <div class="container">
+    <div class="section-header">
+      <p class="mono-meta">CINEMATIC MEMORY REEL</p>
+      <h2 class="section-title">{{ data.video_heading }}</h2>
+    </div>
+    {% if has_personal_video %}
+    <div class="video-container">
+      <video controls preload="metadata" class="personal-video">
+        <source src="{{ url_for('static', filename=data.optional_video_filename) }}" type="video/mp4" />
+      </video>
+    </div>
+    {% else %}
+    <div class="reel-stage" id="memory-reel-stage">
+      {% for photo in data.gallery_photos %}
+      <div class="reel-slide {% if loop.first %}active{% endif %}" data-reel-slide>
+        <p class="mono-meta">SLIDE {{ loop.index }} OF {{ data.gallery_photos|length }} · {{ photo.date }}</p>
+        <h3>{{ photo.caption }}</h3>
+        <p style="color: var(--text-muted-dark); max-width: 580px; margin: 0 auto;">{{ photo.description }}</p>
+      </div>
+      {% endfor %}
+      <div class="reel-controls">
+        <button type="button" id="reel-prev-btn" class="btn-secondary">← Prev Slide</button>
+        <button type="button" id="reel-toggle-btn" class="btn-primary">Pause Reel</button>
+        <button type="button" id="reel-next-btn" class="btn-secondary">Next Slide →</button>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- PAGE 8: INTERACTIVE SURPRISE BUTTONS -->
+<section id="surprises" class="section-ivory">
+  <div class="container">
+    <div class="section-header">
+      <p class="mono-meta-dark">SIX INTERACTIVE SURPRISES</p>
+      <h2 class="section-title-dark">Little Interactive Surprises for You</h2>
+    </div>
+
+    <div class="surprise-buttons-grid">
+      <button type="button" id="btn-wish" class="btn-primary">MAKE A WISH ✨</button>
+      <button type="button" id="btn-hug" class="btn-secondary-dark">SEND A HUG 🤗</button>
+      <button type="button" id="btn-secret" class="btn-secondary-dark">UNLOCK A SECRET 💖</button>
+      <button type="button" id="btn-memory" class="btn-secondary-dark">ONE MORE MEMORY 📸</button>
+      <button type="button" id="btn-song" class="btn-secondary-dark">PLAY OUR SONG 🎵</button>
+      <button type="button" id="btn-beginning" class="btn-secondary-dark">BACK TO THE BEGINNING</button>
+    </div>
+
+    <div id="surprise-output" class="surprise-output-box"
+      data-wishes='{{ data.wishes | tojson }}'
+      data-hug="{{ data.hug_message }}"
+      data-secret="{{ data.secret_message }}"
+      data-photos='{{ data.gallery_photos | tojson }}'>
+      <p id="surprise-output-text" class="hero-subtitle" style="margin-bottom: 0;">{{ data.wishes[0] }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 9: THE FINAL ANNIVERSARY REVEAL -->
+<section id="surprise" class="welcome-section">
+  <div class="container welcome-inner">
+    <p class="mono-meta"><span data-bind-date>{{ data.anniversary_display_date }}</span> · FINAL ANNIVERSARY REVEAL</p>
+    <h2 class="display-title">{{ data.final_reveal_title }}</h2>
+    <p class="hero-subtitle">{{ data.final_reveal_subtitle }}</p>
+    <p class="couple-names">
+      <span data-bind-your-name>{{ data.your_name }}</span> + <span data-bind-partner-name>{{ data.partner_name }}</span>
+    </p>
+
+    <div class="welcome-actions">
+      <button type="button" id="celebrate-love-btn" class="btn-primary btn-large">CELEBRATE OUR LOVE ❤️</button>
+      <a href="#story" class="btn-secondary">Return to Main Story</a>
+    </div>
+
+    <div id="final-celebration-box" class="bouquet-stage" style="margin-top: 2rem;" hidden>
+      <p class="hero-subtitle">&ldquo;{{ data.final_closing_message }}&rdquo;</p>
+      <button type="button" id="replay-final-btn" class="btn-secondary">Replay Final Animation</button>
+    </div>
+  </div>
+</section>
+{% endblock %}

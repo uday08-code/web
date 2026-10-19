@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Memory Gallery — {{ data.your_name }} + {{ data.partner_name }}{% endblock %}
+{% block content %}
+<section class="section-dark">
+  <div class="container">
+    <div class="section-header">
+      <p class="mono-meta">FLOATING MEMORY GALLERY</p>
+      <h1 class="section-title">{{ data.gallery_heading }}</h1>
+    </div>
+    <div class="gallery-grid" id="gallery-grid">
+      {% for photo in data.gallery_photos %}
+      <button type="button" class="gallery-card float-frame"
+        data-index="{{ loop.index0 }}"
+        data-src="{{ url_for('static', filename=photo.filename) }}"
+        data-caption="{{ photo.caption }}"
+        data-date="{{ photo.date }}"
+        data-description="{{ photo.description }}">
+        <p class="mono-meta">{{ photo.date }}</p>
+        <h2 class="gallery-caption">{{ photo.caption }}</h2>
+        <p class="gallery-desc">{{ photo.description }}</p>
+      </button>
+      {% endfor %}
+    </div>
+    <div class="welcome-actions">
+      <a href="{{ url_for('letter') }}" class="btn-primary">Read Anniversary Letter →</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

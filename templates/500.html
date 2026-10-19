@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}500 Server Error — Our First Anniversary{% endblock %}
+{% block content %}
+<section class="welcome-section">
+  <div class="container welcome-inner">
+    <p class="mono-meta">HTTP 500 · INTERNAL SERVER ERROR</p>
+    <h1 class="display-title">A Momentary Pause in Our Story</h1>
+    <p class="hero-subtitle">Something unexpected happened while loading this page, but our love story continues without interruption.</p>
+    <div class="welcome-actions">
+      <a href="{{ url_for('index') }}" class="btn-primary">Return to Anniversary Home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

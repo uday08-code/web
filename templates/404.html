@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}404 Page Not Found — Our First Anniversary{% endblock %}
+{% block content %}
+<section class="welcome-section">
+  <div class="container welcome-inner">
+    <p class="mono-meta">HTTP 404 · PAGE NOT FOUND</p>
+    <h1 class="display-title">This Memory Page Wandered Off</h1>
+    <p class="hero-subtitle">Even if a link leads somewhere unexpected, every path in our story always brings us back home to each other.</p>
+    <div class="welcome-actions">
+      <a href="{{ url_for('index') }}" class="btn-primary">Return to Anniversary Home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

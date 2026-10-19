@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Final Anniversary Surprise — {{ data.your_name }} + {{ data.partner_name }}{% endblock %}
+{% block content %}
+<section class="welcome-section">
+  <div class="container welcome-inner">
+    <p class="mono-meta">OCTOBER 20 · FINAL ANNIVERSARY REVEAL</p>
+    <h1 class="display-title">{{ data.final_reveal_title }}</h1>
+    <p class="hero-subtitle">{{ data.final_reveal_subtitle }}</p>
+    <p class="couple-names">{{ data.your_name }} + {{ data.partner_name }}</p>
+
+    <div class="welcome-actions">
+      <button type="button" id="celebrate-love-btn" class="btn-primary btn-large">CELEBRATE OUR LOVE ❤️</button>
+      <a href="{{ url_for('index') }}" class="btn-secondary">Return to Main Story</a>
+    </div>
+
+    <div id="final-celebration-box" class="bouquet-stage" hidden>
+      <p class="hero-subtitle">&ldquo;{{ data.final_closing_message }}&rdquo;</p>
+      <button type="button" id="replay-final-btn" class="btn-secondary">Replay Final Animation</button>
+    </div>
+  </div>
+</section>
+{% endblock %}

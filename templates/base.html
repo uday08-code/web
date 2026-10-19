@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Our First Anniversary — {{ data.your_name }} + {{ data.partner_name }}{% endblock %}</title>
+  <meta name="description" content="An interactive digital love story celebrating our first wedding anniversary on {{ data.anniversary_display_date }}." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}" />
+</head>
+<body data-music-src="{{ url_for('static', filename=data.local_music_filename) }}">
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- Sticky 3-Zone Top Bar Navigation using Flask url_for() -->
+  <header class="site-header">
+    <a href="{{ url_for('index') }}" class="brand-wordmark">365 Days of Us</a>
+
+    <nav class="primary-nav" id="primary-nav" aria-label="Primary Navigation">
+      <a href="{{ url_for('index') }}#home" class="nav-link {% if active_page == 'home' %}active{% endif %}">Home</a>
+      <a href="{{ url_for('story') }}" class="nav-link {% if active_page == 'story' %}active{% endif %}">Our Story</a>
+      <a href="{{ url_for('memories') }}" class="nav-link {% if active_page == 'memories' %}active{% endif %}">Memories</a>
+      <a href="{{ url_for('index') }}#notes" class="nav-link">Love Notes</a>
+      <a href="{{ url_for('letter') }}" class="nav-link {% if active_page == 'letter' %}active{% endif %}">Our Letter</a>
+      <a href="{{ url_for('timeline') }}" class="nav-link {% if active_page == 'timeline' %}active{% endif %}">Timeline</a>
+    </nav>
+
+    <div class="header-actions">
+      <button type="button" id="open-customizer-btn" class="btn-secondary" aria-label="Personalize names and dates">
+        ✎ Personalize
+      </button>
+      <button type="button" id="music-toggle-btn" class="btn-secondary" aria-label="Toggle background music">
+        <span id="music-state-label">Play Music 🎵</span>
+      </button>
+      <button type="button" id="mute-toggle-btn" class="btn-secondary" aria-label="Mute or unmute audio" hidden>
+        Mute
+      </button>
+      <a href="{{ url_for('surprise') }}" class="btn-primary nav-cta">Final Surprise</a>
+      <button type="button" id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+        ☰
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Interactive Personalize Drawer (Edit the 3 core fields + letter right in the browser!) -->
+  <div id="personalize-drawer" class="drawer-backdrop" role="dialog" aria-modal="true" aria-label="Personalize Anniversary Details" hidden>
+    <div class="drawer-panel">
+      <div class="drawer-header">
+        <div>
+          <p class="mono-meta">PERSONALIZATION SYSTEM</p>
+          <h2 style="font-family: var(--font-serif); font-size: 1.65rem;">Customize Your Names &amp; Date</h2>
+        </div>
+        <button type="button" id="close-customizer-btn" class="btn-secondary">✕</button>
+      </div>
+
+      <form id="personalize-form">
+        <div id="personalize-alert" class="mono-meta" style="color: #F4D3DC; margin-bottom: 1rem;" hidden></div>
+
+        <div class="form-group">
+          <label for="field-your-name">1. Your Name (replaces [YOUR NAME])</label>
+          <input type="text" id="field-your-name" class="form-input" value="{{ data.your_name }}" required />
+        </div>
+
+        <div class="form-group">
+          <label for="field-partner-name">2. Her Name / Partner's Name (replaces [HER NAME])</label>
+          <input type="text" id="field-partner-name" class="form-input" value="{{ data.partner_name }}" required />
+        </div>
+
+        <div class="form-group">
+          <label for="field-anniv-date">3. Anniversary Display Date</label>
+          <input type="text" id="field-anniv-date" class="form-input" value="{{ data.anniversary_display_date }}" required />
+        </div>
+
+        <div class="form-group">
+          <label for="field-hero-subtitle">Opening Subtitle (Optional)</label>
+          <input type="text" id="field-hero-subtitle" class="form-input" value="{{ data.hero_subtitle }}" />
+        </div>
+
+        <div style="display: flex; justify-content: space-between; gap: 0.75rem; margin-top: 1.75rem;">
+          <button type="button" id="reset-customizer-btn" class="btn-secondary">Reset Defaults</button>
+          <button type="submit" class="btn-primary">Save Personalization ✓</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="mono-meta">
+        <span data-bind-your-name>{{ data.your_name }}</span> + <span data-bind-partner-name>{{ data.partner_name }}</span> · First Anniversary · <span data-bind-date>{{ data.anniversary_display_date }}</span>
+      </p>
+      <div class="footer-links">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('story') }}">Story</a>
+        <a href="{{ url_for('memories') }}">Memories</a>
+        <a href="{{ url_for('letter') }}">Letter</a>
+        <a href="{{ url_for('timeline') }}">Timeline</a>
+        <a href="{{ url_for('surprise') }}">Surprise</a>
+      </div>
+    </div>
+  </footer>
+
+  <button type="button" id="back-to-top-btn" class="back-to-top" aria-label="Back to top" hidden>↑</button>
+
+  <script src="{{ url_for('static', filename='js/music.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/gallery.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/interactions.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

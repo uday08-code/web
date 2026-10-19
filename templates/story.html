@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Our Love Story — {{ data.your_name }} + {{ data.partner_name }}{% endblock %}
+{% block content %}
+<section class="section-ivory">
+  <div class="container">
+    <div class="section-header">
+      <p class="mono-meta-dark">CHAPTERS OF US · {{ data.anniversary_display_date }}</p>
+      <h1 class="section-title-dark">{{ data.story_heading }}</h1>
+    </div>
+    <div class="chapters-list">
+      {% for chapter in data.story_chapters %}
+      <article class="chapter-card">
+        <div class="chapter-content">
+          <p class="mono-meta-dark">Chapter {{ chapter.number }} · {{ chapter.date }}</p>
+          <h2 class="chapter-title">{{ chapter.number }}. {{ chapter.title }}</h2>
+          <p class="chapter-text">{{ chapter.paragraph }}</p>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    <div class="welcome-actions">
+      <a href="{{ url_for('memories') }}" class="btn-primary">Explore Our Memory Gallery →</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

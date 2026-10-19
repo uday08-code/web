@@ -1,0 +1,39 @@
+.mobile-menu-btn {
+  display: none;
+  background: #240D15;
+  color: #FAF6F0;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .primary-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #14070C;
+    flex-direction: column;
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  }
+
+  .primary-nav.open {
+    display: flex;
+  }
+
+  .mobile-menu-btn {
+    display: inline-flex;
+  }
+
+  .nav-cta {
+    display: none;
+  }
+
+  .float-frame {
+    animation: none;
+  }
+}

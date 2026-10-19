@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Our Anniversary Letter — {{ data.your_name }} + {{ data.partner_name }}{% endblock %}
+{% block content %}
+<section class="section-ivory">
+  <div class="container">
+    <div class="section-header">
+      <p class="mono-meta-dark">DIGITAL LOVE LETTER · {{ data.anniversary_display_date }}</p>
+      <h1 class="section-title-dark">{{ data.letter.heading }}</h1>
+    </div>
+
+    <div id="envelope-closed" class="envelope-box">
+      <p class="mono-meta">FOR {{ data.partner_name }} · FROM {{ data.your_name }}</p>
+      <h2>Sealed for Our First Anniversary</h2>
+      <button type="button" id="open-letter-btn" class="btn-primary">OPEN MY LETTER 💌</button>
+    </div>
+
+    <article id="letter-paper" class="letter-paper" hidden
+      data-your-name="{{ data.your_name }}"
+      data-partner-name="{{ data.partner_name }}"
+      data-date="{{ data.anniversary_display_date }}">
+      <p class="letter-greeting">{{ data.letter.greeting }}</p>
+      <div id="letter-paragraphs">
+        {% for para in data.letter.paragraphs %}
+        <p>{{ para }}</p>
+        {% endfor %}
+      </div>
+      <p class="letter-signoff">{{ data.letter.sign_off }}<br /><strong>{{ data.your_name }} ❤️</strong></p>
+      <div class="letter-actions">
+        <button type="button" id="read-again-btn" class="btn-secondary">Read Again</button>
+        <button type="button" id="download-letter-btn" class="btn-primary">Download Letter (.txt)</button>
+      </div>
+    </article>
+  </div>
+</section>
+{% endblock %}

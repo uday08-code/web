@@ -1,0 +1,7 @@
+{
+  "name": "Our First Anniversary — An Interactive Digital Love Story",
+  "description": "An intimate, cinematic, interactive digital love story celebrating our first wedding anniversary on October 20.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
